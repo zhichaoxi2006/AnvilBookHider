@@ -1,0 +1,95 @@
+plugins {
+    id 'java-library'
+    id 'idea'
+    id 'net.neoforged.moddev' version '2.0.148'
+}
+
+version = mod_version
+group = mod_group_id
+
+base {
+    archivesName = mod_id
+}
+
+// Minecraft 1.21.1 runs on Java 21.
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+repositories {
+    mavenCentral()
+    // JEI is published here (modmaven is the more reliable of the two JEI mirrors).
+    maven {
+        name = 'ModMaven'
+        url = 'https://modmaven.dev'
+    }
+    maven {
+        name = 'Progwml6 maven'
+        url = 'https://dvs1.progwml6.com/files/maven/'
+    }
+}
+
+// --- NeoForged Maven mirror -------------------------------------------------
+// ModDevGradle adds https://maven.neoforged.net/ itself. That host is served
+// through cdn77, which is unreachable on some networks (mainland China, RU).
+// The official CDN mirror serves the exact same /releases/ and /mojang-meta/
+// layout, so it is used instead. Disable with -PuseNeoForgedMirror=false.
+def useNeoForgedMirror = (findProperty('useNeoForgedMirror') ?: 'true').toBoolean()
+if (useNeoForgedMirror) {
+    repositories.all { repo ->
+        if (repo instanceof org.gradle.api.artifacts.repositories.MavenArtifactRepository) {
+            def originalUrl = repo.url.toString()
+            if (originalUrl.startsWith('https://maven.neoforged.net/')) {
+                repo.url = originalUrl.replace('https://maven.neoforged.net/', 'https://neoforged.forgecdn.net/')
+            }
+        }
+    }
+}
+
+neoForge {
+    version = project.neo_version
+
+    runs {
+        client {
+            client()
+            // Handy for testing: -PquickPlayWorld=<save folder> jumps straight into a world.
+            if (project.hasProperty('quickPlayWorld')) {
+                programArguments.addAll '--quickPlaySingleplayer', project.property('quickPlayWorld').toString()
+            }
+        }
+        server {
+            server()
+        }
+        data {
+            data()
+            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+}
+
+// 'localRuntime' dependencies are available when running the game, but are not
+// exposed to other mods that depend on this one.
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
+
+dependencies {
+    // JEI is client-side only, so it is compile-only for the API and a local
+    // runtime dependency for testing. Nothing is shipped with the mod.
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+    localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+// Ship the sources and javadoc jars, but keep the build lean.
+java {
+    withSourcesJar()
+}

@@ -1,0 +1,36 @@
+modLoader="javafml"
+loaderVersion="[3,]"
+license="MIT"
+issueTrackerURL="https://example.invalid/anvilbookhider/issues"
+
+[[mods]]
+modId="anvilbookhider"
+version="1.0.0"
+displayName="Anvil Book Hider"
+authors="zhichaoxi"
+description='''Hides configurable enchantments from the anvil display in JEI.
+
+Set the enchantment IDs in config/anvilbookhider-common.toml and their
+"enchanted book + item" anvil recipes will no longer be listed by JEI.'''
+
+[[dependencies.anvilbookhider]]
+modId="neoforge"
+type="required"
+versionRange="[21.1.0,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.anvilbookhider]]
+modId="minecraft"
+type="required"
+versionRange="[1.21.1,1.22)"
+ordering="NONE"
+side="BOTH"
+
+# JEI is optional: without it the mod is a no-op.
+[[dependencies.anvilbookhider]]
+modId="jei"
+type="optional"
+versionRange="[19.0.0,)"
+ordering="AFTER"
+side="CLIENT"

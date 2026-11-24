@@ -1,0 +1,29 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.classpath
+.project
+
+# Minecraft run directories
+run/
+run-data/
+runs/
+
+# Local world generation scratch space
+.worldgen/
+
+# Generated data
+src/generated/resources/.cache/
+
+# OS
+.DS_Store
+Thumbs.db
