@@ -48,7 +48,14 @@ public final class AnvilBookHiderJeiPlugin implements IModPlugin {
 
     @Override
     public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
-        hiddenByUs.clear();
+        IRecipeManager recipeManager = jeiRuntime.getRecipeManager();
+
+        // If the runtime is reused (e.g. recipes were reloaded), start from a clean
+        // slate so a changed config can also un-hide something again.
+        if (!hiddenByUs.isEmpty()) {
+            recipeManager.unhideRecipes(RecipeTypes.ANVIL, new ArrayList<>(hiddenByUs));
+            hiddenByUs.clear();
+        }
 
         Set<ResourceLocation> hiddenEnchantments = Config.hiddenEnchantments();
         if (hiddenEnchantments.isEmpty()) {
@@ -56,7 +63,6 @@ public final class AnvilBookHiderJeiPlugin implements IModPlugin {
             return;
         }
 
-        IRecipeManager recipeManager = jeiRuntime.getRecipeManager();
         List<IJeiAnvilRecipe> toHide = recipeManager.createRecipeLookup(RecipeTypes.ANVIL)
                 .includeHidden()
                 .get()
