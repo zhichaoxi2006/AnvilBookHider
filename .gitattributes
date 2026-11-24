@@ -1,3 +1,7 @@
 * text=auto
 *.jar binary
 gradlew text eol=lf
+
+# The logo/banner build scripts are tooling, not mod source: keep them out of
+# GitHub's language statistics so the repository reports Java.
+art/** linguist-documentation
