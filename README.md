@@ -1,5 +1,13 @@
 # Anvil Book Hider
 
+<p align="center">
+  <img src="art/logo/logo-512.png" width="220" alt="Anvil Book Hider logo">
+</p>
+
+<p align="center">
+  <img src="art/logo/banner-1280x720.png" alt="Anvil Book Hider banner">
+</p>
+
 NeoForge 1.21.1 模组：**通过配置文件隐藏 JEI 中指定附魔在铁砧的显示。**
 
 JEI 没有原版铁砧配方，它会为“可附魔物品 × 附魔 × 等级”自动生成大量
@@ -113,3 +121,15 @@ JEI 依赖来自 `https://modmaven.dev`（`dvs1.progwml6.com` 作为备用）。
 * 只隐藏 **JEI 的显示**，不影响铁砧实际功能，也不影响 REI / EMI。
 * 配置在 JEI 重建配方时读取，改完配置需重新进入世界。
 * 只按附魔 ID 过滤；如果想完全关闭 JEI 的铁砧分类，请用 JEI 自带配置。
+
+## 许可证
+
+[MIT](LICENSE)（MIT License）。
+
+* [`LICENSE`](LICENSE)：MIT 许可证完整文本，版权归 © 2026 zhichaoxi 所有。
+* 许可证同样记录在构建元数据里：`gradle.properties` 的 `mod_license=MIT` 与
+  `src/main/resources/META-INF/neoforge.mods.toml` 的 `license="MIT"`。
+* `art/logo/` 下的 logo 与横幅由本项目制作（脚本为 `compose_final.py` / `make_banner.py`），
+  其中用到铁砧、附魔书等 Minecraft 原版贴图，这些贴图的版权仍归 Mojang Studios 所有。
+
+欢迎提交 Issue 与 Pull Request：<https://github.com/zhichaoxi2006/AnvilBookHider>。

@@ -1,12 +1,13 @@
 modLoader="javafml"
 loaderVersion="[3,]"
 license="MIT"
-issueTrackerURL="https://example.invalid/anvilbookhider/issues"
+issueTrackerURL="https://github.com/zhichaoxi2006/AnvilBookHider/issues"
 
 [[mods]]
 modId="anvilbookhider"
 version="1.0.0"
 displayName="Anvil Book Hider"
+logoFile="logo.png"
 authors="zhichaoxi"
 description='''Hides configurable enchantments from the anvil display in JEI.
 
