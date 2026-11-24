@@ -8,13 +8,17 @@ import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.recipe.IRecipeManager;
 import mezz.jei.api.recipe.vanilla.IJeiAnvilRecipe;
 import mezz.jei.api.runtime.IJeiRuntime;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
+import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -62,6 +66,7 @@ public final class AnvilBookHiderJeiPlugin implements IModPlugin {
             AnvilBookHider.LOGGER.info("[AnvilBookHider] No enchantments are configured to be hidden from JEI's anvil display.");
             return;
         }
+        warnAboutUnloadedEnchantments(hiddenEnchantments);
 
         List<IJeiAnvilRecipe> toHide = recipeManager.createRecipeLookup(RecipeTypes.ANVIL)
                 .includeHidden()
@@ -99,6 +104,27 @@ public final class AnvilBookHiderJeiPlugin implements IModPlugin {
     private static boolean usesHiddenEnchantment(IJeiAnvilRecipe recipe, Set<ResourceLocation> hiddenEnchantments) {
         return containsHiddenEnchantment(recipe.getRightInputs(), hiddenEnchantments)
                 || containsHiddenEnchantment(recipe.getOutputs(), hiddenEnchantments);
+    }
+
+    /**
+     * The default config refers to a modded enchantment, so it is normal for the ID
+     * to be unknown when that mod is not installed. Say so instead of hiding nothing
+     * silently.
+     */
+    private static void warnAboutUnloadedEnchantments(Set<ResourceLocation> hiddenEnchantments) {
+        Level level = Minecraft.getInstance().level;
+        if (level == null) {
+            return;
+        }
+        Registry<Enchantment> registry = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+        for (ResourceLocation id : hiddenEnchantments) {
+            if (!registry.containsKey(id)) {
+                AnvilBookHider.LOGGER.warn(
+                        "[AnvilBookHider] Enchantment {} is not present in this world (is its mod installed?); ignoring it.",
+                        id
+                );
+            }
+        }
     }
 
     private static boolean containsHiddenEnchantment(List<ItemStack> stacks, Set<ResourceLocation> hiddenEnchantments) {

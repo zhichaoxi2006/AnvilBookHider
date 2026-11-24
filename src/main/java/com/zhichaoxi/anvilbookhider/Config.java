@@ -26,13 +26,15 @@ public final class Config {
                         "Enchantment IDs that must not be shown in JEI's Anvil category.",
                         "Every anvil recipe whose book (or result) carries one of these",
                         "enchantments is hidden from JEI.",
-                        "Example: hiddenEnchantments = [\"minecraft:mending\", \"minecraft:frost_walker\"]",
+                        "Default: Ars Nouveau's \"Reactive\" (新生魔艺的反应附魔). It can be applied",
+                        "to any item, so JEI otherwise lists a book recipe for every item.",
+                        "Example: hiddenEnchantments = [\"ars_nouveau:reactive\", \"minecraft:mending\"]",
                         "Changes are applied the next time JEI builds its recipes (i.e. when you join a world)."
                 )
                 .defineListAllowEmpty(
                         "hiddenEnchantments",
-                        List.of(),
-                        () -> "minecraft:mending",
+                        List.of("ars_nouveau:reactive"),
+                        () -> "ars_nouveau:reactive",
                         Config::isEnchantmentId
                 );
 

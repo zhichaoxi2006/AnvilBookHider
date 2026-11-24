@@ -58,14 +58,18 @@ Linux / macOS 使用 `./gradlew`。
 ## 配置文件
 
 首次启动后会在 `run/config/`（正式游戏为 `.minecraft/config/`）生成
-`anvilbookhider-common.toml`：
+`anvilbookhider-common.toml`，默认隐藏**新生魔艺（Ars Nouveau）的“反应”附魔**：
 
 ```toml
-hiddenEnchantments = ["minecraft:mending", "minecraft:frost_walker"]
+hiddenEnchantments = ["ars_nouveau:reactive"]
 ```
 
-* 每项都是附魔的注册名（`命名空间:路径`），支持模组附魔，例如 `apotheosis:某附魔`。
-* 默认是空列表，即什么都不隐藏。
+* 每项都是附魔的注册名（`命名空间:路径`），支持模组附魔。
+* 默认值选 `ars_nouveau:reactive` 是因为该附魔的 `supported_items` 是 `neoforge:any`，
+  能给任意物品附魔，JEI 因此会为几乎所有可附魔物品 × 每个等级都列出铁砧配方，数量极多。
+* 如果没装新生魔艺，这条配置会被忽略，并在日志里提示：
+  `Enchantment ars_nouveau:reactive is not present in this world ...; ignoring it.`
+* 想隐藏多个附魔就写成 `["ars_nouveau:reactive", "minecraft:mending"]`；写成 `[]` 表示全部显示。
 * 修改后需要**重新进入世界 / 重连服务器**才会生效：JEI 会在重建配方时重新读取配置。
 
 ## 实现原理
@@ -87,14 +91,13 @@ hiddenEnchantments = ["minecraft:mending", "minecraft:frost_walker"]
 
 ### 已验证的行为
 
-开发客户端（NeoForge 21.1.248 + JEI 19.27.0.340）中，把配置设为
-`hiddenEnchantments = ["minecraft:mending"]` 并进入世界后，日志输出：
+开发客户端（NeoForge 21.1.248 + JEI 19.27.0.340）中实测：
 
-```
-[AnvilBookHider] Hid 67 anvil recipe(s) for enchantment(s) [minecraft:mending].
-```
-
-即 67 条“修补附魔书 + 物品”的铁砧配方已从 JEI 中移除，其余附魔的铁砧配方保留。
+* 默认配置（`["ars_nouveau:reactive"]`）在**没装新生魔艺**的整合包里会正常生成，并提示
+  `Enchantment ars_nouveau:reactive is not present in this world ...; ignoring it.`，不会报错；
+* 配置为 `["ars_nouveau:reactive", "minecraft:mending"]` 并进入世界后，日志输出
+  `[AnvilBookHider] Hid 67 anvil recipe(s) for enchantment(s) [ars_nouveau:reactive, minecraft:mending].`，
+  即 67 条“修补附魔书 + 物品”的铁砧配方被移除，其余附魔的铁砧配方保留。
 
 ## 构建环境说明（网络）
 
